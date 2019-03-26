@@ -108,7 +108,15 @@ flow:
           - FAILURE: FAILURE
     - power_on_vm:
         do:
-          io.cloudslang.vmware.vcenter.power_on_vm: []
+          io.cloudslang.vmware.vcenter.power_on_vm:
+            - host: "${get_sp('vcenter_host')}"
+            - user: "${get_sp('vcenter_user')}"
+            - password:
+                value: "${get_sp('vcenter_password')}"
+                sensitive: true
+            - vm_identifier: name
+            - vm_name: name
+            - datacenter: "${get_sp('datacenter')}"
         navigate:
           - SUCCESS: SUCCESS
           - FAILURE: FAILURE
@@ -122,19 +130,39 @@ flow:
                 sensitive: true
             - vm_identifier: name
             - vm_name: vmlinux
+            - datacenter: "${get_sp('datacenter')}"
             - vm_cpu_count: '4'
         navigate:
           - SUCCESS: set_vm_memory_size
           - FAILURE: FAILURE
     - set_vm_memory_size:
         do:
-          io.cloudslang.vmware.vcenter.vm.conf.set_vm_memory_size: []
+          io.cloudslang.vmware.vcenter.vm.conf.set_vm_memory_size:
+            - host: "${get_sp('vcenter_host')}"
+            - user: "${get_sp('vcenter_user')}"
+            - password:
+                value: "${get_sp('vcenter_password')}"
+                sensitive: true
+            - vm_identifier: name
+            - vm_name: "${get_sp('vcenter_password')}"
+            - vm_memory_size: '32'
         navigate:
           - SUCCESS: add_nic_to_vm
           - FAILURE: FAILURE
     - add_nic_to_vm:
         do:
-          io.cloudslang.vmware.vcenter.vm.conf.add_nic_to_vm: []
+          io.cloudslang.vmware.vcenter.vm.conf.add_nic_to_vm:
+            - host: "${get_sp('vcenter_host')}"
+            - user: "${get_sp('vcenter_user')}"
+            - password:
+                value: "${get_sp('vcenter_password')}"
+                sensitive: true
+            - vm_identifier: name
+            - vm_name: name
+            - datacenter: null
+            - net_port_group: "${get_sp('datacenter')}"
+            - net_nic_type: e1000
+            - net_mac_generation: second
         navigate:
           - SUCCESS: power_on_vm
           - FAILURE: FAILURE
@@ -164,21 +192,21 @@ extensions:
             targetId: 32b1eba8-b234-b36a-15b0-5697b1f71660
             port: FAILURE
       set_vmcpu_count:
-        x: 223
-        y: 81
+        x: 221
+        y: 78
         navigate:
           16f8e3c9-8e31-c1a5-7a8a-78084570701c:
             targetId: 32b1eba8-b234-b36a-15b0-5697b1f71660
             port: FAILURE
       set_vm_memory_size:
-        x: 378
-        y: 79
+        x: 379
+        y: 76
         navigate:
           0ea4f68a-be34-2433-d88a-aa4249532cb7:
             targetId: 32b1eba8-b234-b36a-15b0-5697b1f71660
             port: FAILURE
       add_nic_to_vm:
-        x: 572
+        x: 573
         y: 79
         navigate:
           23dbf708-baac-7192-942b-d04d1dc09fd7:
