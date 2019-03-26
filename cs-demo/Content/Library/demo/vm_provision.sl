@@ -14,28 +14,45 @@
 
 namespace: cs_demo.content.library.demo
 
-flow:
+operation:
   name: vm_provision
 
   inputs:
-    - input_1: ""
-    - input_2: ""
+    - host
+    - port:
+        default: '443'
+        required: false
+    - protocol:
+        default: 'https'
+        required: true
+    - username
+    - password:
+        sensitive: true
+    - trust_everyone:
+        required: false
+    - trustEveryone:
+        default: ${get("trust_everyone", "true")}
+        private: true
+    - hostname
+    - virtual_machine_name
+    - virtualMachineName:
+        default: ${get("virtual_machine_name", "")}
+        private: true
+        required: false
+    - delimiter:
+        default: ','
+        required: false
 
-  workflow:
-    - step_1:
-        do:
-          operation_name:
-            - step_input_1: ${input_1}
-            - step_input_2: ${input_2}
-        publish:
-          - step_output_1
-        navigate:
-          - SUCCESS: SUCCESS
-          - FAILURE: FAILURE
+  java_action:
+    gav: 'io.cloudslang.content:cs-vmware:0.0.21'
+    class_name: io.cloudslang.content.vmware.actions.vm.GetVMDetails
+    method_name: getVMDetails
 
   outputs:
-    - output_1: ${step_output_1}
+    - return_result: ${get("returnResult", "")}
+    - error_message: ${get("exception", returnResult if returnCode != '0' else '')}
+    - return_code: ${returnCode}
 
   results:
-    - SUCCESS
+    - SUCCESS : ${returnCode == '0'}
     - FAILURE
